@@ -2,6 +2,7 @@ from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
+import os
 
 @CrewBase
 class ResearchCrew():
@@ -10,16 +11,21 @@ class ResearchCrew():
 	tasks_config = 'config/tasks.yaml'
  
 	def __init__(self):
-		# self.llm = ChatOpenAI(
-        	# model="gpt-4o"
-    		# model="gpt-4-turbo"
-        #)
-		self.llm = ChatGroq(
-			# model="mixtral-8x7b-32768"
-			# model="llama3-8b-8192"
-			# model="llama3-70b-8192"
-			model="gemma-7b-it"
-		)	
+		agent_model = os.getenv('AGENT_MODEL')
+		if agent_model == 'ChatOpenAI':
+			self.llm = ChatOpenAI(
+				model="gpt-4o"
+				# model="gpt-4-turbo"
+			)
+		elif agent_model == 'ChatGroq':
+			self.llm = ChatGroq(
+				# model="mixtral-8x7b-32768"
+				# model="llama3-8b-8192"
+				# model="llama3-70b-8192"
+				model="gemma-7b-it"
+			)
+		else:
+			raise ValueError("Invalid AGENT_MODEL environment variable value")
 
 	@agent
 	def researcher(self) -> Agent:

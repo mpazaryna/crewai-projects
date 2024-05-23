@@ -24,6 +24,10 @@ poetry lock
 poetry install
 ```
 
+## Configuration
+
+To switch between `ChatOpenAI` and `ChatGroq` for agent initialization, set the `AGENT_MODEL` environment variable to either `ChatOpenAI` or `ChatGroq`. This allows for easy switching between the two models without altering the codebase.
+
 ## Running the Project
 
 To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
