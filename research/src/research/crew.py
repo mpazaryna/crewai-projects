@@ -15,19 +15,23 @@ class ResearchCrew:
     tasks_config = "config/tasks.yaml"
 
     def __init__(self):
+
+        # OpenAI models
+        self.gpt3 = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
+        self.gpt4 = ChatOpenAI(model_name="gpt-4-turbo", temperature=0.7)
+        self.gpt4o = ChatOpenAI(model_name="gpt-4o", temperature=0.7)
+
+         # Groq Models
+        self.llama3_8b = ChatGroq(temperature=0.7,  model_name="llama3-8b-8192")
+        self.llama3_70b = ChatGroq(temperature=0.7,  model_name="llama3-70b-8192")
+        self.mixtral_8x7b = ChatGroq(temperature=0.7,  model_name="mixtral-8x7b-32768")
+        self.gemma_7b = ChatGroq(temperature=0.7,  model_name="gemma-7b-it")
+        
         agent_model = os.getenv("AGENT_MODEL")
         if agent_model == "ChatOpenAI":
-            self.llm = ChatOpenAI(
-                model="gpt-4o"
-                # model="gpt-4-turbo"
-            )
+            self.llm = self.gpt4o
         elif agent_model == "ChatGroq":
-            self.llm = ChatGroq(
-                # model="mixtral-8x7b-32768"
-                # model="llama3-8b-8192"
-                # model="llama3-70b-8192"
-                model="gemma-7b-it"
-            )
+            self.llm = self.llama3_70b
         elif agent_model == "Ollama":
             self.llm = Ollama(model="mistral")
         else:
@@ -40,7 +44,9 @@ class ResearchCrew:
             # tools=[MyCustomTool()], # Example of custom tool, loaded on the beginning of file
             verbose=True,
             llm=self.llm,
-            # max_iter=4,
+            system_template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|>{{ .System }}<|eot_id|>""",
+            prompt_template="""<|start_header_id|>user<|end_header_id|>{{ .Prompt }}<|eot_id|>""",
+            response_template="""<|start_header_id|>assistant<|end_header_id|>{{ .Response }}<|eot_id|>""",
         )
 
     @agent
@@ -49,7 +55,10 @@ class ResearchCrew:
             config=self.agents_config["reporting_analyst"],
             verbose=True,
             llm=self.llm,
-            # max_iter=4,
+            system_template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|>{{ .System }}<|eot_id|>""",
+            prompt_template="""<|start_header_id|>user<|end_header_id|>{{ .Prompt }}<|eot_id|>""",
+            response_template="""<|start_header_id|>assistant<|end_header_id|>{{ .Response }}<|eot_id|>""",
+
         )
 
     @task
